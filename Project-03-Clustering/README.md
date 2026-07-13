@@ -1,13 +1,13 @@
 # Adult Income Predictor
 
-A Streamlit web application that predicts adult's income using a Logistic Regression model trained with Scikit-learn.
+A Streamlit web application that predicts possible segment to which an input belongs.
 
 ## Features
 
 - Interactive user interface
 - Scikit-learn Pipeline
 - Automatic preprocessing
-- Income Probability
+
 
 ## Installation
 
