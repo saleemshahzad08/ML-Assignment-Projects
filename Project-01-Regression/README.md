@@ -1,2 +1,21 @@
-# ML-Assignment-Projects
-This despositoy is for my ML Assignments Projects that I intend to submit to Zafar Iqbal Sahib. 
+# Insurance Charges Predictor
+
+A Streamlit web application that predicts insurance charges based on features like bmi, no. of children, etc.
+
+## Features
+
+- Interactive user interface
+- Scikit-learn Pipeline
+- Automatic preprocessing
+
+## Installation
+
+```bash
+pip install -r requirements.txt
+```
+
+## Run
+
+```bash
+streamlit run app.py
+```
