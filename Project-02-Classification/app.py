@@ -15,7 +15,7 @@ import joblib                       # For Loading the Trained Model
 # Loading Model
 # -------------------------------------------------------
 
-model = joblib.load('Adult-Income-Predictor/model.pkl')
+model = joblib.load('Project-02-Classification/model.pkl')
 
 st.title('Income Level Predictor')
 
