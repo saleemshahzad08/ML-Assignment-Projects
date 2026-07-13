@@ -8,7 +8,7 @@ import joblib                       # For Loading the Trained Model
 # Loading Model
 # -------------------------------------------------------
 
-model = joblib.load('model.pkl')
+model = joblib.load('Project-01-Regression/model.pkl')
 
 st.title('MedCost Predict')
 
