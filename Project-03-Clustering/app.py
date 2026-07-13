@@ -7,7 +7,7 @@ st.set_page_config(page_title="Customer Segmentation Predictor", page_icon="🛍
 # ---------------------------------------------------------
 # Load pre-trained artifact (scaler + kmeans + cluster profile)
 # ---------------------------------------------------------
-artifact = joblib.load("Project-03-Clustering/app.py")
+artifact = joblib.load("Project-03-Clustering/model.pkl")
 scaler = artifact["scaler"]
 kmeans = artifact["kmeans"]
 features = artifact["features"]
