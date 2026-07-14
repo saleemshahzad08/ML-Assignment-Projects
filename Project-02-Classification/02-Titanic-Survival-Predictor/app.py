@@ -18,7 +18,7 @@ st.set_page_config(
 # 2. Load the trained Scikit-learn pipeline.
 # The pipeline already contains preprocessing + model.
 # ---------------------------------------------------------
-model = joblib.load("Titanic-Survival-Predictor/02-Professional-Streamlit-Titanic/model.pkl")
+model = joblib.load("Project-02-Classification/02-Titanic-Survival-Predictor/model.pkl")
 
 # ---------------------------------------------------------
 # 3. Sidebar
@@ -41,7 +41,7 @@ have survived using a Logistic Regression model.
 # ---------------------------------------------------------
 # 4. Banner + Heading
 # ---------------------------------------------------------
-st.image("Titanic-Survival-Predictor/02-Professional-Streamlit-Titanic/assets/titanic.jpg", use_container_width=True)
+st.image("Project-02-Classification/02-Titanic-Survival-Predictor/assets/titanic.jpg", use_container_width=True)
 
 st.title("🚢 Titanic Survival Predictor")
 
