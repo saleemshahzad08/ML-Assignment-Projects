@@ -1,6 +1,6 @@
-# Adult Income Predictor
+# Mall Customer's Segmentation
 
-A Streamlit web application that predicts possible segment to which an input belongs.
+A Streamlit web application that predicts possible segment to which an customer belongs.
 
 ## Features
 
@@ -20,3 +20,6 @@ pip install -r requirements.txt
 ```bash
 streamlit run app.py
 ```
+
+## Try this App
+[Click Here](https://ml-assignment-projects-happ5npmds2v9nfplg4vjfg.streamlit.app/)
