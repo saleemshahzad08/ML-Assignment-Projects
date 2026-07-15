@@ -9,6 +9,7 @@ Original file is located at
 
 import pandas as pd
 import numpy as np
+import joblib
 from sklearn.model_selection import train_test_split, GridSearchCV
 from sklearn.preprocessing import StandardScaler, OneHotEncoder
 from sklearn.compose import ColumnTransformer
@@ -25,89 +26,92 @@ df = pd.read_csv('/content/insurance.csv')
 # Separating Features and Label
 X = df.drop(columns=['charges'])
 y = df['charges']
-print(X['region'].unique())
-# # Separating Numerical and Categorical Columns
-# num_feat = X.select_dtypes(include='number').columns.tolist()
-# cat_feat = X.select_dtypes(exclude='number').columns.tolist()
+
+# Separating Numerical and Categorical Columns
+num_feat = X.select_dtypes(include='number').columns.tolist()
+cat_feat = X.select_dtypes(exclude='number').columns.tolist()
 
 # # Train Test Split
-# X_train, X_test, y_train, y_test = train_test_split(
-#     X, y,
-#     test_size=0.2,
-#     random_state = 43
-# )
+X_train, X_test, y_train, y_test = train_test_split(
+     X, y,
+     test_size=0.2,
+     random_state = 43
+)
 
-# # Numerical Pipeline to Transform Numerical Columns
-# num_pipeline = Pipeline(
-#     steps=[
-#         ('imputer', SimpleImputer(strategy='median')),
-#         ('sclaer', StandardScaler())
-#     ]
-# )
+# Numerical Pipeline to Transform Numerical Columns
+num_pipeline = Pipeline(
+    steps=[
+        ('imputer', SimpleImputer(strategy='median')),
+        ('sclaer', StandardScaler())
+    ]
+)
 
-# # Categorical Pipeline to Transform Categorical Columns
-# cat_pipeline = Pipeline(
-#     steps=[
-#         ('imputer', SimpleImputer(strategy='most_frequent')),
-#         ('encoder', OneHotEncoder(drop='first', handle_unknown='ignore'))
-#     ]
-# )
+# Categorical Pipeline to Transform Categorical Columns
+cat_pipeline = Pipeline(
+    steps=[
+        ('imputer', SimpleImputer(strategy='most_frequent')),
+        ('encoder', OneHotEncoder(drop='first', handle_unknown='ignore'))
+    ]
+)
 
-# # Column Transformer
-# preprocessor = ColumnTransformer(
-#     transformers=[
-#         ('num', num_pipeline, num_feat),
-#         ('cat', cat_pipeline, cat_feat)
-#     ]
-# )
+# Column Transformer
+preprocessor = ColumnTransformer(
+    transformers=[
+        ('num', num_pipeline, num_feat),
+        ('cat', cat_pipeline, cat_feat)
+    ]
+)
 
-# # Final Pipeline
-# pipe = Pipeline(
-#     steps=[
-#         ('preprocessor', preprocessor),
-#         ('model', Ridge())
-#     ]
-# )
+# Final Pipeline
+pipe = Pipeline(
+    steps=[
+        ('preprocessor', preprocessor),
+        ('model', Ridge())
+    ]
+)
 
-# # Parameters Grid to Try
-# param_grid = [
-#     {'model': [Ridge()], 'model__alpha': [0.1, 1, 10, 100]},
-#     {'model': [Lasso()], 'model__alpha': [0.001, 0.01, 0.1, 1]},
-#     {'model': [RandomForestRegressor()], 'model__n_estimators': [100, 300], 'model__max_depth': [5, 10, None]},
-#     {'model': [SVR()], 'model__C': [0.1, 1, 10], 'model__kernel': ['rbf', 'linear']},
-# ]
+# Parameters Grid to Try
+param_grid = [
+    {'model': [Ridge()], 'model__alpha': [0.1, 1, 10, 100]},
+    {'model': [Lasso()], 'model__alpha': [0.001, 0.01, 0.1, 1]},
+    {'model': [RandomForestRegressor()], 'model__n_estimators': [100, 300], 'model__max_depth': [5, 10, None]},
+    {'model': [SVR()], 'model__C': [0.1, 1, 10], 'model__kernel': ['rbf', 'linear']},
+]
 
-# # Determining Best Estimator
-# grid = GridSearchCV(pipe, param_grid, scoring='r2', cv=5, n_jobs=-1)
-# model = grid.fit(X, y).best_estimator_
+# Determining Best Estimator
+grid = GridSearchCV(pipe, param_grid, scoring='r2', cv=5, n_jobs=-1)
+model = grid.fit(X_train, y_train).best_estimator_
 
-# # Testing Best Estimator on Training and Test Data
-# y_pred = model.predict(X_test)
-# y_train_pred = model.predict(X_train)
+# Testing Best Estimator on Training and Test Data
+y_pred = model.predict(X_test)
+y_train_pred = model.predict(X_train)
+# print(f'Training Score: {model.score(X_train, y_train)}')
+# print(f'Testing Score: {model.score(X_test, y_test)}')
+# Training Metrics
+MAE_train = mean_absolute_error(y_train, y_train_pred)
+MSE_train = mean_squared_error(y_train, y_train_pred)
+RMSE_train = root_mean_squared_error(y_train, y_train_pred)
+R2_train = r2_score(y_train, y_train_pred)
 
-# # Training Metrics
-# MAE_train = mean_absolute_error(y_train, y_train_pred)
-# MSE_train = mean_squared_error(y_train, y_train_pred)
-# RMSE_train = root_mean_squared_error(y_train, y_train_pred)
-# R2_train = r2_score(y_train, y_train_pred)
+# Test Metrics
+MAE_test = mean_absolute_error(y_test, y_pred)
+MSE_test = mean_squared_error(y_test, y_pred)
+RMSE_test = root_mean_squared_error(y_test, y_pred)
+R2_test = r2_score(y_test, y_pred)
 
-# # Test Metrics
-# MAE_test = mean_absolute_error(y_test, y_pred)
-# MSE_test = mean_squared_error(y_test, y_pred)
-# RMSE_test = root_mean_squared_error(y_test, y_pred)
-# R2_test = r2_score(y_test, y_pred)
+# Gaps Between Training and Test Metrics
+MAE_gap = MAE_test - MAE_train
+MSE_gap = MSE_test - MSE_train
+RMSE_gap = RMSE_test - RMSE_train
+R2_gap = R2_test - R2_train
 
-# # Gaps Between Training and Test Metrics
-# MAE_gap = MAE_test - MAE_train
-# MSE_gap = MSE_test - MSE_train
-# RMSE_gap = RMSE_test - RMSE_train
-# R2_gap = R2_test - R2_train
+print(f"{'Scenario':<20} | {'MAE':^20} | {'MSE':^20} | {'RMSE':^20} | {'R²':^20}")
+print("-"*112)
+print(f"{'Trainig':<20} | {MAE_train:^20.2f} | {MSE_train:^20.2f} | {RMSE_train:^20.2f} | {R2_train:^20.2f}")
+print("-"*112)
+print(f"{'Testing':<20} | {MAE_test:^20.2f} | {MSE_test:^20.2f} | {RMSE_test:^20.2f} | {R2_test:^20.2f}")
+print("-"*112)
+print(f"{'Gap (Test - Train)':<20} | {MAE_gap:^20.2f} | {MSE_gap:^20.2f} | {RMSE_gap:^20.2f} | {R2_gap:^20.2f}")
+print("-"*112)
 
-# print(f"{'Scenario':<20} | {'MAE':^20} | {'MSE':^20} | {'RMSE':^20} | {'R²':^20}")
-# print("-"*112)
-# print(f"{'Trainig':<20} | {MAE_train:^20.2f} | {MSE_train:^20.2f} | {RMSE_train:^20.2f} | {R2_train:^20.2f}")
-# print("-"*112)
-# print(f"{'Testing':<20} | {MAE_test:^20.2f} | {MSE_test:^20.2f} | {RMSE_test:^20.2f} | {R2_test:^20.2f}")
-# print("-"*112)
-# print(f"{'Gap (Test - Train)':<20} | {MAE_gap:^20.2f} | {MSE_gap:^20.2f} | {RMSE_gap:^20.2f} | {R2_gap:^20.2f}")
-# print("-"*112)
+joblib.dump(model, 'model.pkl')
