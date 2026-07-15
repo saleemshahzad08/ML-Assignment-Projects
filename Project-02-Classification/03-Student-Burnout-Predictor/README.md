@@ -1,4 +1,4 @@
-# Titanic Survival Prediction
+# Student Burnout Level Predictor
 
 A Streamlit web application that predicts student's burnout level.
 
