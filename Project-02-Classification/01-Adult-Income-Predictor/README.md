@@ -20,3 +20,6 @@ pip install -r requirements.txt
 ```bash
 streamlit run app.py
 ```
+
+## Try this App
+[Click Here](https://adult-income-predictor-ss.streamlit.app/)
