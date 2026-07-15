@@ -22,4 +22,4 @@ streamlit run app.py
 ```
 
 ## Try this App
-[Click Here](https://adult-income-predictor-ss.streamlit.app/)
+[Click Here](https://ml-assignment-projects-c3uah6ljcxbmablmkhfs5j.streamlit.app/)
