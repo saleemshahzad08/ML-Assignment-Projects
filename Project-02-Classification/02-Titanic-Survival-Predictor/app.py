@@ -181,7 +181,7 @@ if st.button("🔍 Predict Survival", use_container_width=True):
     st.table(summary)
 
     with st.expander("📄 View Input Data"):
-        st.dataframe(input_df, use_container_width=True)
+        st.dataframe(input_df, width='stretch')
 
     with st.expander("🤖 Model Information"):
         st.write("""
