@@ -41,7 +41,7 @@ have survived using a Logistic Regression model.
 # ---------------------------------------------------------
 # 4. Banner + Heading
 # ---------------------------------------------------------
-st.image("Project-02-Classification/02-Titanic-Survival-Predictor/assets/titanic.jpg", use_container_width=True)
+st.image("Project-02-Classification/02-Titanic-Survival-Predictor/assets/titanic.jpg", width='stretch')
 
 st.title("🚢 Titanic Survival Predictor")
 
@@ -134,7 +134,7 @@ st.divider()
 # ---------------------------------------------------------
 # 7. Prediction Button
 # ---------------------------------------------------------
-if st.button("🔍 Predict Survival", use_container_width=True):
+if st.button("🔍 Predict Survival", width='stretch'):
 
     prediction = model.predict(input_df)[0]
 
