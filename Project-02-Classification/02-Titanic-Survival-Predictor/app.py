@@ -1,205 +1,160 @@
-import streamlit as st
-import pandas as pd
-import joblib
-from datetime import datetime
+# ==========================================================
+# Titanic Survival Prediction App
+#
+# This application loads a trained Scikit-learn Pipeline
+# and predicts whether a passenger would survive.
+#
+# The Pipeline already performs:
+#   • Missing value imputation
+#   • One-Hot Encoding
+#   • Feature Scaling
+#   • Logistic Regression Prediction
+#
+# Therefore, we only provide the ORIGINAL features.
+# ==========================================================
 
-# ---------------------------------------------------------
-# 1. Configure the Streamlit page.
-# This MUST be the first Streamlit command.
-# ---------------------------------------------------------
-st.set_page_config(
-    page_title="Titanic Survival Predictor",
-    page_icon="🚢",
-    layout="wide",
-    initial_sidebar_state="expanded"
+# Import Streamlit for building the web application.
+import streamlit as st
+
+# Import Pandas to create a DataFrame.
+import pandas as pd
+
+# Joblib is used to load the trained model.
+import joblib
+
+# ----------------------------------------------------------
+# Load the trained machine learning model.
+# ----------------------------------------------------------
+
+model = joblib.load("model.pkl")
+
+# ----------------------------------------------------------
+# App Title
+# ----------------------------------------------------------
+
+st.title("🚢 Titanic Survival Prediction")
+
+st.write(
+    "Enter the passenger details below and click **Predict** "
+    "to estimate whether the passenger would survive."
 )
 
-# ---------------------------------------------------------
-# 2. Load the trained Scikit-learn pipeline.
-# The pipeline already contains preprocessing + model.
-# ---------------------------------------------------------
-model = joblib.load("Project-02-Classification/02-Titanic-Survival-Predictor/model.pkl")
+# ----------------------------------------------------------
+# User Inputs
+# ----------------------------------------------------------
 
-# ---------------------------------------------------------
-# 3. Sidebar
-# ---------------------------------------------------------
-with st.sidebar:
-    st.title("ℹ️ About")
-    st.write("""
-This demo predicts whether a Titanic passenger would
-have survived using a Logistic Regression model.
+sex = st.selectbox(
+    "Sex",
+    ["male", "female"]
+)
 
-**Dataset:** Seaborn Titanic
+embarked = st.selectbox(
+    "Embarked Port",
+    ["C", "Q", "S"]
+)
 
-**Model:** Logistic Regression
+pclass = st.slider(
+    "Passenger Class",
+    min_value=1,
+    max_value=3,
+    value=3
+)
 
-**Deployment:** Streamlit
-""")
-    st.divider()
-    st.write("Developed as part of an AI Engineering course.")
+age = st.number_input(
+    "Age",
+    min_value=0,
+    max_value=100,
+    value=25
+)
 
-# ---------------------------------------------------------
-# 4. Banner + Heading
-# ---------------------------------------------------------
-st.image("Project-02-Classification/02-Titanic-Survival-Predictor/assets/titanic.jpg", width='stretch')
+fare = st.number_input(
+    "Fare",
+    min_value=0.0,
+    value=32.0
+)
 
-st.title("🚢 Titanic Survival Predictor")
+sibsp = st.slider(
+    "Number of Siblings / Spouses",
+    min_value=0,
+    max_value=10,
+    value=0
+)
 
-st.write("""
-Predict whether a passenger would have survived the
-Titanic disaster using a Machine Learning model.
-""")
+parch = st.slider(
+    "Number of Parents / Children",
+    min_value=0,
+    max_value=10,
+    value=0
+)
 
-st.divider()
+alone = st.selectbox(
+    "Travelling Alone?",
+    ["Yes", "No"]
+)
 
-# ---------------------------------------------------------
-# 5. Two-column responsive layout
-# ---------------------------------------------------------
-left, right = st.columns(2)
+# ----------------------------------------------------------
+# Convert "Yes" / "No" into integers.
+#
+# During training, the "alone" column was converted into:
+#
+# True  -> 1
+# False -> 0
+# ----------------------------------------------------------
 
-with left:
-    sex = st.selectbox(
-        "Sex",
-        ["male", "female"],
-        help="Passenger gender."
-    )
+alone = 1 if alone == "Yes" else 0
 
-    age = st.number_input(
-        "Age",
-        min_value=0,
-        max_value=100,
-        value=25,
-        help="Passenger age."
-    )
+# ----------------------------------------------------------
+# Create a DataFrame.
+#
+# The column names must exactly match those used during
+# model training.
+# ----------------------------------------------------------
 
-    embarked = st.selectbox(
-        "Embarked",
-        ["C", "Q", "S"],
-        help="Port where the passenger boarded."
-    )
+input_data = pd.DataFrame({
 
-    fare = st.number_input(
-        "Fare",
-        min_value=0.0,
-        value=25.0,
-        help="Ticket fare."
-    )
+    "pclass": [pclass],
+    "sex": [sex],
+    "age": [age],
+    "fare": [fare],
+    "sibsp": [sibsp],
+    "parch": [parch],
+    "embarked": [embarked],
+    "alone": [alone]
 
-with right:
-    pclass = st.slider(
-        "Passenger Class",
-        1,
-        3,
-        3,
-        help="1 = First, 2 = Second, 3 = Third"
-    )
-
-    sibsp = st.slider(
-        "Siblings / Spouses",
-        0,
-        8,
-        0
-    )
-
-    parch = st.slider(
-        "Parents / Children",
-        0,
-        6,
-        0
-    )
-
-    alone = st.selectbox(
-        "Travelling Alone?",
-        ["Yes", "No"]
-    )
-
-# ---------------------------------------------------------
-# 6. Create DataFrame
-# IMPORTANT:
-# Column names must match training data.
-# ---------------------------------------------------------
-input_df = pd.DataFrame({
-    "sex":[sex],
-    "embarked":[embarked],
-    "pclass":[pclass],
-    "age":[age],
-    "fare":[fare],
-    "sibsp":[sibsp],
-    "parch":[parch],
-    "alone":[1 if alone=="Yes" else 0]
 })
 
-st.divider()
+st.subheader("Input Sent to the Pipeline")
 
-# ---------------------------------------------------------
-# 7. Prediction Button
-# ---------------------------------------------------------
-if st.button("🔍 Predict Survival", width='stretch'):
+st.dataframe(input_data)
 
-    prediction = model.predict(input_df)[0]
+# ----------------------------------------------------------
+# Predict Button
+# ----------------------------------------------------------
 
-    probability = model.predict_proba(input_df)[0]
+if st.button("Predict"):
 
-    survival_probability = probability[1]
+    # Predict survival.
+    prediction = model.predict(input_data)[0]
 
-    st.header("Prediction Result")
+    # Predict probability.
+    probability = model.predict_proba(input_data)[0]
+
+    st.subheader("Prediction Result")
 
     if prediction == 1:
-        st.success("✅ Passenger is likely to SURVIVE.")
+
+        st.success("🎉 The passenger is predicted to SURVIVE.")
+
+        st.write(
+            f"**Probability of Survival:** "
+            f"{probability[1]:.2%}"
+        )
+
     else:
-        st.error("❌ Passenger is unlikely to SURVIVE.")
 
-    st.metric(
-        "Survival Probability",
-        f"{survival_probability:.2%}"
-    )
+        st.error("❌ The passenger is predicted NOT to survive.")
 
-    st.progress(float(survival_probability))
-
-    if survival_probability >= 0.80:
-        st.info("Confidence: High")
-    elif survival_probability >= 0.60:
-        st.info("Confidence: Moderate")
-    else:
-        st.info("Confidence: Low")
-
-    st.subheader("Prediction Summary")
-
-    summary = pd.DataFrame({
-        "Feature":[
-            "Sex","Age","Passenger Class",
-            "Fare","Embarked","Siblings/Spouses",
-            "Parents/Children","Travelling Alone"
-        ],
-        "Value":[
-            sex,age,pclass,
-            fare,embarked,sibsp,
-            parch,alone
-        ]
-    })
-
-    st.table(summary)
-
-    with st.expander("📄 View Input Data"):
-        st.dataframe(input_df, width='stretch')
-
-    with st.expander("🤖 Model Information"):
-        st.write("""
-**Algorithm:** Logistic Regression
-
-Accuracy: **83.80%**
-
-Precision: **77.59%**
-
-Recall: **73.77%**
-
-F1 Score: **75.63%**
-""")
-
-    st.caption(
-        f"Prediction generated on "
-        f"{datetime.now().strftime('%d %B %Y, %I:%M:%S %p')}"
-    )
-
-st.divider()
-st.caption("Built with ❤️ using Streamlit and Scikit-learn.")
+        st.write(
+            f"**Probability of Survival:** "
+            f"{probability[0]:.2%}"
+        )
