@@ -21,7 +21,7 @@ st.set_page_config(
 # ---------------------------------------------------------
 @st.cache_resource
 def load_model():
-    return joblib.load("model.pkl")
+    return joblib.load("Project-02-Classification/03-Student-Burnout-Predictor/model.pkl")
 
 model = load_model()
 
