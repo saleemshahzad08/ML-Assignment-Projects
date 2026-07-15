@@ -26,7 +26,7 @@ import joblib
 # Load the trained machine learning model.
 # ----------------------------------------------------------
 
-model = joblib.load("model.pkl")
+model = joblib.load("Project-02-Classification/02-Titanic-Survival-Predictor/model.pkl")
 
 # ----------------------------------------------------------
 # App Title
